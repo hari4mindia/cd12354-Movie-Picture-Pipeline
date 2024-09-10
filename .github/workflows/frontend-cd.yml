@@ -69,10 +69,15 @@ jobs:
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v2
 
-    # Debug lines added here
+    # Debug line for AWS IAM user
     - name: Check AWS IAM User (STS Get Caller Identity)
       run: aws sts get-caller-identity
-    
+
+    # Configure Kubernetes context before kubectl commands
+    - name: Update Kubeconfig
+      run: aws eks update-kubeconfig --name cluster --region us-east-1
+
+    # Debug line for Kubernetes Pods and Nodes after kubeconfig update
     - name: Check Kubernetes Pods and Nodes
       run: kubectl get po,nodes
 
@@ -84,9 +89,6 @@ jobs:
       run: |
         docker build --build-arg=REACT_APP_MOVIE_API_URL=http://localhost:5000 --tag ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-east-1.amazonaws.com/$REPO_NAME:$IMAGE_TAG .
         docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-east-1.amazonaws.com/$REPO_NAME:$IMAGE_TAG
-
-    - name: Update Kubeconfig
-      run: aws eks update-kubeconfig --name cluster --region us-east-1
 
     - name: Deploy Docker Image to Amazon EKS
       working-directory: starter/frontend/k8s
