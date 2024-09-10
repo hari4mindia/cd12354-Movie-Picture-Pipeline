@@ -69,6 +69,13 @@ jobs:
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v2
 
+    # Debug lines added here
+    - name: Check AWS IAM User (STS Get Caller Identity)
+      run: aws sts get-caller-identity
+    
+    - name: Check Kubernetes Pods and Nodes
+      run: kubectl get po,nodes
+
     - name: Build and Push Docker Image
       working-directory: starter/frontend
       env:
