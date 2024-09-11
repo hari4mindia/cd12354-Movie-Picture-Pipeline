@@ -8,7 +8,6 @@ on:
 
 env:
   NODE_VERSION: '18.x'
-  REACT_APP_MOVIE_API_URL: 'http://localhost:5000'
   CACHE_NAME: 'cache-node-modules'
 
 jobs:
@@ -114,6 +113,4 @@ jobs:
       run: npm ci
 
     - name: Build and Run Docker Image
-      run: |
-        docker build --build-arg REACT_APP_MOVIE_API_URL=${{ env.REACT_APP_MOVIE_API_URL }} --tag=mp-frontend:latest .
-        docker run --name mp-frontend -p 3000:3000 -d mp-frontend
+      run: docker build .
