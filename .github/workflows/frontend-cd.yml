@@ -81,13 +81,20 @@ jobs:
     - name: Check Kubernetes Pods and Nodes
       run: kubectl get po,nodes
 
+    - name: Print Environment Variables
+      run: |
+        echo "REACT_APP_MOVIE_API_URL=${{ vars.REACT_APP_MOVIE_API_URL }}"
+        echo "AWS_ACCOUNT_ID=${{ secrets.AWS_ACCOUNT_ID }}"
+        echo "IMAGE_TAG=${{ env.IMAGE_TAG }}"
+        echo "REPO_NAME=${{ env.REPO_NAME }}"
+
     - name: Build and Push Docker Image
       working-directory: starter/frontend
       env:
         IMAGE_TAG: latest
         REPO_NAME: frontend
       run: |
-        docker build --build-arg=REACT_APP_MOVIE_API_URL=http://${{ vars.REACT_APP_MOVIE_API_URL }} --tag ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-east-1.amazonaws.com/$REPO_NAME:$IMAGE_TAG .
+        docker build --build-arg REACT_APP_MOVIE_API_URL=${{ vars.REACT_APP_MOVIE_API_URL }} --tag ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-east-1.amazonaws.com/$REPO_NAME:$IMAGE_TAG .
         docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-east-1.amazonaws.com/$REPO_NAME:$IMAGE_TAG
 
     - name: Deploy Docker Image to Amazon EKS
