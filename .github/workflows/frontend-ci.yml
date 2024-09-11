@@ -112,5 +112,10 @@ jobs:
     - name: Install npm
       run: npm ci
 
+    - name: Generate Unique Image Tag
+      id: image_tag
+      run: echo "IMAGE_TAG=$(date +%Y%m%d%H%M%S)" >> $GITHUB_ENV
+
     - name: Build and Run Docker Image
-      run: docker build .
+      run: |
+        docker build --tag frontend:${{ env.IMAGE_TAG }} .
